@@ -3,9 +3,6 @@ package ADT_Bag;
 
 public class OnlineShopper {
 
-    /**
-     * @param args
-     */
     public static void main(String[] args) {
         Item[] items = {new Item("Bird feeder", 2050),
                         new Item("Squirrel guard", 1547),
