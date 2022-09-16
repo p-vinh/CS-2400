@@ -8,7 +8,7 @@ public class OnlineShopper {
                         new Item("Squirrel guard", 1547),
                         new Item("Bird bath", 4499),
                         new Item("Sunflower seeds", 1295),
-                        new Item("Rat Poison", 18) };
+                        };
     
         BagInterface<Item> shoppingCart = new Bag<>();
         int totalCost = 0;

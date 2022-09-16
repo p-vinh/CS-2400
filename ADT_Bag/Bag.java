@@ -1,59 +1,66 @@
 package ADT_Bag;
 
-import java.util.ArrayList;
 
-public class Bag<Item> implements BagInterface<Item> {
+public class Bag<T> implements BagInterface<T> {
 
-    private ArrayList<Item> items = new ArrayList<>(3);
+    private static int intialCapacity;
+    private T[] bag = (T[]) new Object[intialCapacity];
+    private static int numOfEntries = 0;
+
+    public Bag() {
+        this.intialCapacity = 16;
+    }
+
+    public Bag(int capacity) {
+        @SuppressWarnings("unchecked")
+        T[] temp = (T[]) new Object[capacity];
+        bag = temp;
+    }
 
     public int getCurrentSize() {
-        return items.size();
+        return bag.length;
     }
 
     public boolean isEmpty() {
-        return items.size() > 0 ? false : true;
+        return bag.length > 0 ? false : true;
     }
 
-    public boolean add(Item newEntry) {
+    public boolean add(T newEntry) {
         try {
-            items.add(newEntry);
+            bag[numOfEntries] = newEntry;
+            System.out.println(bag[numOfEntries]);
+            numOfEntries++;
             return true;
         } catch (Exception RuntimeException) {
             return false;
         }
-
     }
 
     public void clear() {
-        items.clear();
+        for(int i = 0; i < bag.length; i++)
+            bag[i] = null;
     }
 
-    public boolean contains(Item anEntry) {
-        for (Item o : items)
+    public boolean contains(T anEntry) {
+        for (T o : bag)
             return anEntry == o ? true : false;
         return false;
     }
 
-    public int getFrequencyOf(Item anEntry) {
+    public int getFrequencyOf(T anEntry) {
 
         return 0;
     }
 
-    public Item remove() {
-        try {
-            if(!isEmpty()) {
-                Item i = items.get(0);
-                items.remove(0);
-                return i;
-            }
-        } catch (Exception RuntimeException) {
-            return null;
-        }
-        return null;
+    public T remove() {
+        T remove = bag[numOfEntries];
+        bag[numOfEntries] = null;
+        numOfEntries--;
+        return remove;
     }
 
-    public boolean remove(Item anEntry) {
-
+    public boolean remove(T anEntry) {
+        
         return false;
     }
 
@@ -62,7 +69,7 @@ public class Bag<Item> implements BagInterface<Item> {
      * @return A newly allocated array of all the entries in the bag.
      * Note: If the bag is empty, the returned array is empty.
      */
-    public Item[] toArray() {
+    public T[] toArray() {
 
         return null;
     }
