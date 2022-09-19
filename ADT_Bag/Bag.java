@@ -1,9 +1,11 @@
 package ADT_Bag;
 
+import java.util.Arrays;
+
 public class Bag<T> implements BagInterface<T> {
 
     private static final int DEFAULT_CAPACITY = 25;
-    private final T[] bag;
+    private T[] bag;
     private int numOfEntries;
     private boolean integrityOK = false;
     private static final int MAX_CAPACITY = 10000;
@@ -27,62 +29,60 @@ public class Bag<T> implements BagInterface<T> {
     }
 
     public int getCurrentSize() {
-        return bag.length;
+        return numOfEntries;
     }
 
     public boolean isEmpty() {
-
-        for (int i = 0; i < bag.length; i++) {
-            if (bag[i] != null)
-                return true;
-        }
-        return false;
+        return numOfEntries == 0;
     }
 
     public boolean add(T newEntry) {
         boolean result = true;
         if(isArrayFull()) {
-            result = false;
+            doubleCapacity();
         }
-        else {
-            bag[numOfEntries] = newEntry;
-            numOfEntries++;
-        }
+        bag[numOfEntries] = newEntry;
+        numOfEntries++;
+
         return result;
     }
 
     public void clear() {
-        for (int i = 0; i < bag.length; i++)
-            bag[i] = null;
+        while(!isEmpty()) {
+            remove();
+        }
     }
 
     public boolean contains(T anEntry) {
-        for (T o : bag)
-            return anEntry == o ? true : false;
-        return false;
+        checkIntegrity();
+        // return anEntry.equals(bag[getIndexOf(anEntry)]);
+        return getIndexOf(anEntry) >= -1; // or >= 0;   
     }
 
     public int getFrequencyOf(T anEntry) {
+        checkIntegrity();
+        int counter = 0;
 
-        return 0;
+        for(int i = 0; i < numOfEntries; i++)
+            if (anEntry.equals(bag[i]))
+                counter++;
+        return counter;
     }
 
+    /** Removes one unspecified entry from this bag, if possible.
+     *  @return Either the removed entry, if the removal was successful, or null otherwise.
+     */
     public T remove() {
-        try {
-            System.out.println(!isEmpty());
-            if (!isEmpty()) {
-                numOfEntries--;
-                return bag[numOfEntries];
-            }
-        } catch (Exception RuntimeException) {
-            return null;
-        }
-        return null;
+        checkIntegrity();
+        T result = removeEntry(numOfEntries - 1);
+        return result;
     }
 
     public boolean remove(T anEntry) {
-
-        return false;
+        checkIntegrity();
+        int index = getIndexOf(anEntry);
+        T result = removeEntry(index);
+        return anEntry.equals(result);
     }
 
     /**
@@ -110,5 +110,53 @@ public class Bag<T> implements BagInterface<T> {
         if (!integrityOK) {
             throw new SecurityException("Bag Object is corrupt");
         }
+    }
+
+    // Removes and returns the entry at a given index within the array bag.
+    // If no such entry exist, returns null
+        // Precondition: 0 <= givenIndex < numberOfEntries;
+    //            checkIntegrity has been called.
+    private T removeEntry(int givenIndex) {
+        T result = null;
+
+        if (!isEmpty() && (givenIndex >= 0)) {
+            result = bag[givenIndex]; // Entry to remove
+            bag[givenIndex] = bag[numOfEntries - 1]; // Replace entry with the last entry
+            bag[numOfEntries - 1] = null; // Remove last entry
+            numOfEntries--;
+        }
+        return result;
+    }
+
+    private int getIndexOf(T anEntry) {
+        int where = -1;
+        boolean found = false;
+        int index = 0;
+
+        while(!found && (index < numOfEntries)) {
+            if(anEntry.equals(bag[index])) {
+                found = true;
+                where = index;
+            }
+            index++;
+        }
+        // Assertion: If where > -1, anEntry is in the array bag, and it
+        // equals bag[where]; otherwise, anEntry is not in the array
+        return where;
+    }
+
+    // Throws an exception if the client requests a capacity that is too large.
+    private void checkCapacity(int capacity) {
+        if(capacity > MAX_CAPACITY) {
+            throw new IllegalStateException("Attempt to create a bag whose capacity exeeds allowed maximum of " + MAX_CAPACITY);
+        }
+    }
+
+    // Doubles the size of the array bag.
+    // Precondition: checkIntegrity has been called.
+    private void doubleCapacity() {
+        int newLength = bag.length * 2;
+        checkCapacity(newLength);
+        bag = Arrays.copyOf(bag, newLength);
     }
 }
