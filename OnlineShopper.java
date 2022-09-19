@@ -10,7 +10,7 @@ public class OnlineShopper {
                         new Item("Sunflower seeds", 1295),
                         };
     
-        BagInterface<Item> shoppingCart = new Bag<>();
+        BagInterface<Item> shoppingCart = new ArrayBag<>();
         int totalCost = 0;
         // Statements that add selected items to the shopping cart:
         for (int index = 0; index < items.length; index++) {

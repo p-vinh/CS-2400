@@ -1,6 +1,7 @@
 package ADT_Bag;
 
-public class Bag<T> implements BagInterface<T> {
+// "final" cant have a subclass
+public final class ArrayBag<T> implements BagInterface<T> {
 
     private static final int DEFAULT_CAPACITY = 25;
     private final T[] bag;
@@ -8,15 +9,14 @@ public class Bag<T> implements BagInterface<T> {
     private boolean integrityOK = false;
     private static final int MAX_CAPACITY = 10000;
 
-    public Bag() {
-        this(DEFAULT_CAPACITY);
+    public ArrayBag() {
+        this(DEFAULT_CAPACITY); // Passes down int to another constructer with int param
     }
 
-    public Bag(int capacity) {
-
+    public ArrayBag(int capacity) {
         if (capacity <= MAX_CAPACITY) {
             @SuppressWarnings("unchecked")
-            T[] temp = (T[]) new Object[capacity];
+            T[] temp = (T[]) new Object[capacity]; // Unchecked cast
             bag = temp;
             numOfEntries = 0;
             integrityOK = true;
@@ -27,16 +27,11 @@ public class Bag<T> implements BagInterface<T> {
     }
 
     public int getCurrentSize() {
-        return bag.length;
+        return numOfEntries;
     }
 
     public boolean isEmpty() {
-
-        for (int i = 0; i < bag.length; i++) {
-            if (bag[i] != null)
-                return true;
-        }
-        return false;
+        return numOfEntries == 0;
     }
 
     public boolean add(T newEntry) {
@@ -52,8 +47,9 @@ public class Bag<T> implements BagInterface<T> {
     }
 
     public void clear() {
-        for (int i = 0; i < bag.length; i++)
-            bag[i] = null;
+        while(!isEmpty()) {
+            remove();
+        }
     }
 
     public boolean contains(T anEntry) {
@@ -69,7 +65,6 @@ public class Bag<T> implements BagInterface<T> {
 
     public T remove() {
         try {
-            System.out.println(!isEmpty());
             if (!isEmpty()) {
                 numOfEntries--;
                 return bag[numOfEntries];
@@ -102,6 +97,10 @@ public class Bag<T> implements BagInterface<T> {
         return result;
     }
 
+    /**
+     * Checks if the bag is full
+     * @return True or False if the number of entries is equal or greater than the bag capacity
+     */
     private boolean isArrayFull() {
         return numOfEntries >= bag.length;
     }
